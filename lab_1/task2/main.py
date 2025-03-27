@@ -1,4 +1,5 @@
 from constants import ENCODED_FILE, DECRYPTED_FILE, FOUND_KEY_FILE
+from lab_1.task2.constants import CHAR_REPLACEMENTS
 from substitution import decrypt
 
 
@@ -22,16 +23,12 @@ def write_results(decrypted_text: str, key: dict) -> None:
         raise Exception(f"Ошибка записи в {ENCODED_FILE}: {e}")
 
 
-def swap_chars(text: str, char1: str, char2: str) -> str:
-    result = []
-    for char in text:
-        if char == char1:
-            result.append(char2)
-        elif char == char2:
-            result.append(char1)
-        else:
-            result.append(char)
-    return ''.join(result)
+def apply_manual_corrections(text: str, replacements: list[tuple[str, str]]):
+    results = text
+    for char1, char2 in replacements:
+        result = result.replace(char1, '\0').replace(char2, char1).replace('\0', char2)
+    return result
+
 
 
 def main():
@@ -40,29 +37,7 @@ def main():
 
         decrypted_text, found_key = decrypt(encoded_text)
 
-        decrypted_text = swap_chars(decrypted_text, 'Р', 'К')
-        decrypted_text = swap_chars(decrypted_text, 'С', 'А')
-        decrypted_text = swap_chars(decrypted_text, 'Д', 'П')
-        decrypted_text = swap_chars(decrypted_text, 'Ь', 'Ч')
-        decrypted_text = swap_chars(decrypted_text, 'С', 'Т')
-        decrypted_text = swap_chars(decrypted_text, 'Р', 'В')
-        decrypted_text = swap_chars(decrypted_text, 'Л', 'М')
-        decrypted_text = swap_chars(decrypted_text, 'Р', 'Я')
-        decrypted_text = swap_chars(decrypted_text, 'Р', 'П')
-        decrypted_text = swap_chars(decrypted_text, 'Р', 'Л')
-        decrypted_text = swap_chars(decrypted_text, 'Г', 'Э')
-        decrypted_text = swap_chars(decrypted_text, 'У', 'Й')
-        decrypted_text = swap_chars(decrypted_text, 'З', 'Ь')
-        decrypted_text = swap_chars(decrypted_text, 'Х', 'Ы')
-        decrypted_text = swap_chars(decrypted_text, 'Ф', 'Г')
-        decrypted_text = swap_chars(decrypted_text, 'Х', 'У')
-        decrypted_text = swap_chars(decrypted_text, 'Х', 'Ц')
-        decrypted_text = swap_chars(decrypted_text, 'Х', 'Б')
-        decrypted_text = swap_chars(decrypted_text, 'Х', 'Щ')
-        decrypted_text = swap_chars(decrypted_text, 'Ш', 'Ю')
-        decrypted_text = swap_chars(decrypted_text, 'Ф', 'Щ')
-        decrypted_text = swap_chars(decrypted_text, 'Ъ', 'Ш')
-
+        apply_manual_corrections(decrypted_text, CHAR_REPLACEMENTS)
 
         write_results(decrypted_text, found_key)
 
