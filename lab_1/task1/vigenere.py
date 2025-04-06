@@ -1,14 +1,17 @@
-from lab_1.task1.constants import ALPHABET, ALPHABET_LENGTH
+from lab_1.task1.constants import ALPHABET, ALPHABET_LENGTH, REPLACEMENTS
+
+
+def clean_text(text: str) -> str:
+    text = text.upper()
+    for old, new in REPLACEMENTS.items():
+        text = text.replace(old, new)
+    return text
 
 
 def encrypt(text: str, key: str) -> str:
     encrypted = []
-    key = key.upper().replace('Ё', 'Е')
-    text = text.upper().replace('Ё', 'Е')
-    text = text.upper().replace('!', '')
-    text = text.upper().replace('?', '')
-    text = text.upper().replace('.', '')
-    text = text.upper().replace(',', '')
+    key = clean_text(key)
+    text = clean_text(text)
 
     for i, char in enumerate(text.upper()):
         if char not in ALPHABET:

@@ -6,3 +6,13 @@ ALPHABET_LENGTH = len(ALPHABET)
 INPUT_FILE = 'input.txt'
 ENCRYPTED_FILE = 'encrypted.txt'
 KEY_FILE = 'key.txt'
+
+#Замены для приведения к выбранному алфавиту
+REPLACEMENTS = {
+    'Ё' : 'Е',
+    '!' : '',
+    '?' : '',
+    ',' : '',
+    '.' : '',
+    ':' : '',
+}
