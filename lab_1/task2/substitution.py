@@ -20,12 +20,12 @@ def frequency_analysis(encoded_text: str) -> dict[str, float]:
     return {char: count / total for char, count in freq.items()}
 
 
-def decrypt(encoded_text: str) -> tuple[str, dict]:
+def get_frequency_key(encoded_text: str) -> dict:
     """
     Расшифровать текст согласно частотам появления в нем определенных символов,
         сопоставляя с частотами появления букв русского алфавита
     :param encoded_text: зашифрованный текст
-    :return: кортеж, состоящий из расшифрованного текста и ключа для расшифровки
+    :return: ключ, сопоставляющий буквы шифротекста и исходного текста
     """
     encoded_freq = frequency_analysis(encoded_text)
 
@@ -34,7 +34,11 @@ def decrypt(encoded_text: str) -> tuple[str, dict]:
 
     key = {enc_char: std_char for enc_char, std_char in zip(sorted_encoded, sorted_standard)}
 
+    return key
+
+
+def decrypt(encoded_text:str, key: dict) -> str:
     decrypted = []
     for char in encoded_text:
         decrypted.append(key.get(char, char))
-    return ''.join(decrypted), key
+    return ''.join(decrypted)

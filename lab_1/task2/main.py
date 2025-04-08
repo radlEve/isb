@@ -1,6 +1,6 @@
 from constants import ENCODED_FILE, DECRYPTED_FILE, FOUND_KEY_FILE
 from lab_1.task2.constants import CHAR_REPLACEMENTS
-from substitution import decrypt
+from substitution import get_frequency_key, decrypt
 
 
 def read_encoded_file() -> str:
@@ -34,22 +34,18 @@ def write_results(decrypted_text: str, key: dict) -> None:
         raise Exception(f"Ошибка записи в {ENCODED_FILE}: {e}")
 
 
-def apply_manual_corrections(text: str, key: dict, replacements: list[tuple[str, str]]) -> tuple[str, dict]:
+def apply_manual_corrections(key: dict, replacements: list[tuple[str, str]]) -> dict:
     """
-    Применить ручные изменения для текста и ключа,
+    Применить ручные изменения для ключа,
     поочередно меняя местами по 2 буквы из алфавита
-    :param text: исходный текст
     :param key: исходный ключ (словарь {шифр_буква: обычная_буква})
     :param replacements: список букв,
         которые необходимо поменять местами в заданном порядке
-    :return: кортеж из получившегося текста и итогового ключа
+    :return: итоговый ключ
     """
-    result = text
     new_key = key.copy()
 
     for char1, char2 in replacements:
-        result = result.replace(char1, '\0').replace(char2, char1).replace('\0', char2)
-
         key_upd = {}
         for cipher_char, plain_char in new_key.items():
             if plain_char == char1:
@@ -59,17 +55,18 @@ def apply_manual_corrections(text: str, key: dict, replacements: list[tuple[str,
 
         new_key.update(key_upd)
 
-    return result, new_key
-
+    return new_key
 
 
 def main():
     try:
         encoded_text = read_encoded_file()
 
-        decrypted_text, found_key = decrypt(encoded_text)
+        found_key = get_frequency_key(encoded_text)
 
-        decrypted_text, found_key = apply_manual_corrections(decrypted_text, found_key, CHAR_REPLACEMENTS)
+        found_key = apply_manual_corrections(found_key, CHAR_REPLACEMENTS)
+
+        decrypted_text = decrypt(encoded_text, found_key)
 
         write_results(decrypted_text, found_key)
 
