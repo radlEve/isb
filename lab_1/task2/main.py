@@ -1,5 +1,6 @@
+import re
+
 from constants import ENCODED_FILE, DECRYPTED_FILE, FOUND_KEY_FILE
-from lab_1.task2.constants import FINAL_KEY
 from substitution import decrypt
 
 
@@ -14,20 +15,51 @@ def read_encoded_file() -> str:
     except FileNotFoundError:
         raise FileNotFoundError(f"Файл {ENCODED_FILE} не найден!")
 
-def write_results(decrypted_text: str, key: dict) -> None:
+
+def read_key_from_file(filepath: str) -> dict:
     """
-    Записать в отдельные файлы (пути до которых указаны в константах)
-        расшифрованный текст и ключ в виде "*char_before* -> *char_after*"
+    Считать ключ дешифровки из файла.
+    Ожидаемый формат строки: "шифр_символ -> текст_символ"
+    :param filepath: Путь к файлу с ключом.
+    :return: Словарь {шифр_символ: текст_символ}.
+    """
+    key = {}
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+
+                parts = re.split(r'\s*->\s*', line, maxsplit=1)
+
+                if len(parts) == 2:
+                    enc_char = parts[0]
+                    dec_char = parts[1]
+
+                    if dec_char == '':
+                        dec_char = ' '
+
+                    if enc_char == '':
+                        enc_char = ' '
+
+                    key[enc_char] = dec_char
+    except Exception as e:
+        raise Exception(f"Ошибка чтения файла ключа '{filepath}': {e}")
+
+    return key
+
+
+def write_results(decrypted_text: str) -> None:
+    """
+    Записать в отдельный файл (путь до которого указан в константах)
+        расшифрованный текст
     :param decrypted_text: расшифрованный текст
-    :param key: ключ для расшифровки исходного текста
     :return: None
     """
     try:
         with open(DECRYPTED_FILE, 'w', encoding='utf-8') as file:
             file.write(decrypted_text)
-        with open(FOUND_KEY_FILE, 'w', encoding='utf-8') as file:
-            for enc_char, dec_char in key.items():
-                file.write(f"{enc_char} -> {dec_char}\n")
     except FileNotFoundError:
         raise FileNotFoundError(f"Файл {ENCODED_FILE} не найден!")
     except Exception as e:
@@ -39,9 +71,11 @@ def main():
     try:
         encoded_text = read_encoded_file()
 
-        decrypted_text = decrypt(encoded_text, FINAL_KEY)
+        found_key = read_key_from_file(FOUND_KEY_FILE)
 
-        write_results(decrypted_text, FINAL_KEY)
+        decrypted_text = decrypt(encoded_text, found_key)
+
+        write_results(decrypted_text)
 
     except Exception as e:
         print(f"Ошибка: {e}")
