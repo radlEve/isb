@@ -10,7 +10,12 @@ from files_management import (
 )
 
 
-def generate_keys(config):
+def generate_keys(config: dict[str, str]) -> None:
+    """
+    Генерирует и сохраняет ключи для гибридной криптосистемы
+    :param config: Словарь с путями для сохранения ключей и файлов
+    :return: None
+    """
     print("Режим генерации ключей запущен")
 
     symmetric_key = KeyGeneration.generate_sym_key()
@@ -30,7 +35,12 @@ def generate_keys(config):
     print('Успех! Генерация ключей завершена')
 
 
-def encrypt_data(config):
+def encrypt_data(config: dict[str, str]) -> None:
+    """
+    Шифрует файл с использованием гибридной криптосистемы
+    :param config: Словарь с путями к файлам и ключам
+    :return: None
+    """
     print("Режим шифрования данных запущен")
 
     private_key = deserialize_private_key(config['secret_key'])
@@ -51,7 +61,12 @@ def encrypt_data(config):
     print("Успех! Шифрование завершено")
 
 
-def decrypt_data(config):
+def decrypt_data(config: dict[str, str]) -> None:
+    """
+    Дешифрует файл, зашифрованный гибридной криптосистемой
+    :param config: Словарь с путями к файлам и ключам
+    :return: None
+    """
     print("Режим дешифрования данных")
 
     private_key = deserialize_private_key(config['secret_key'])
@@ -75,7 +90,7 @@ def decrypt_data(config):
 def main():
     parser = argparse.ArgumentParser(description='Гибридная криптосистема (RSA + IDEA)')
 
-    group = parser.add_mutually_exclusive_group(required=True) # взаимоисключающие аргументы
+    group = parser.add_mutually_exclusive_group(required=True)  # взаимоисключающие аргументы
     group.add_argument('-gen', '--generation', action='store_true',
                        help='Запускает режим генерации ключей')
     group.add_argument('-enc', '--encryption', action='store_true',
